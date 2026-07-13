@@ -1,0 +1,16 @@
+{
+  "name": "INNOVIA-TAS Dashboard",
+  "short_name": "INNOVIA-TAS",
+  "description": "Freigabe-Dashboard fuer den INNOVIA-TAS Content Agent",
+  "start_url": "index.html",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F4F2EF",
+  "theme_color": "#2B2B2B",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
