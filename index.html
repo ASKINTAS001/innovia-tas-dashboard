@@ -321,7 +321,7 @@
       const res = await fetch(WEBHOOK_URL, {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ action: 'login', benutzername: user, passwort: pw })
+        body: JSON.stringify({ action: 'login', username: user, password: pw })
       });
       const data = await res.json();
       if (data && data.success) {
@@ -348,7 +348,7 @@
       const res = await fetch(WEBHOOK_URL, {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ action: 'passwort_anfordern', benutzername: reqUser })
+        body: JSON.stringify({ action: 'passwort_anfordern', username: reqUser })
       });
       await res.json();
       requestError.style.color = 'var(--anthrazit-dark)';

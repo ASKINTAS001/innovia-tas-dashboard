@@ -452,7 +452,7 @@
       await fetch(WEBHOOK_URL, {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ action: action, image_url: m.image_url, durch: 'Askin', grund: grund })
+        body: JSON.stringify({ action: action, id: m.id, durch: 'Askin', grund: grund })
       });
       await ladeQueue();
     } catch (err) {
