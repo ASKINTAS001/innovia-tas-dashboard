@@ -165,12 +165,14 @@
     color:var(--text-muted); text-align:center;
   }
   .kpi-tab.active{background:var(--anthrazit); color:#fff; border-color:var(--anthrazit);}
-  .kpi-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px;}
+  .kpi-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
   .kpi{
     background:#FAF9F7; border:1px solid var(--line); border-radius:10px;
     padding:12px 10px; text-align:center;
   }
   .kpi .kv{font-size:19px; font-weight:700; line-height:1.2;}
+  .kpi.est{background:#FFF8F1; border-color:#EBD9C6;}
+  .kpi.est .kv{color:#B06A00;}
   .kpi .kl{font-size:10.5px; color:var(--text-muted); margin-top:3px; text-transform:uppercase; letter-spacing:.04em;}
   .kpi-note{font-size:10.5px; color:var(--text-muted); margin-top:10px;}
 
@@ -196,6 +198,43 @@
   .muted{color:var(--text-muted);}
   .err{color:var(--rot); font-size:12.5px;}
 
+  /* Uhr */
+  .head-right{display:flex; align-items:center; gap:18px;}
+  .clock{
+    font-size:12.5px; color:var(--text-muted); font-variant-numeric:tabular-nums;
+    white-space:nowrap;
+  }
+
+  /* Kachel-Grid */
+  .tile-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px;}
+  .tile{
+    border:1px solid var(--line); border-radius:10px; overflow:hidden;
+    background:#FAF9F7; display:flex; flex-direction:column;
+  }
+  .tile-img{
+    width:100%; aspect-ratio:16/9; background:#EDEBE7; position:relative;
+    display:flex; align-items:center; justify-content:center;
+    font-size:10.5px; color:var(--text-muted); text-align:center; padding:6px;
+  }
+  .tile-img img{width:100%; height:100%; object-fit:cover; display:block;}
+  .tile-body{padding:9px 10px 11px; display:flex; flex-direction:column; gap:6px; flex:1;}
+  .tile-chip{
+    align-self:flex-start; color:#fff; font-size:9.5px; font-weight:700;
+    padding:2px 8px; border-radius:20px; text-transform:uppercase; letter-spacing:.04em;
+  }
+  .tile-topic{
+    font-size:12px; line-height:1.35; color:var(--text);
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+  }
+  .tile-meta{
+    display:flex; align-items:center; gap:6px; font-size:10.5px;
+    color:var(--text-muted); margin-top:auto;
+  }
+  .tile-link{
+    font-size:10.5px; color:var(--rot); text-decoration:none;
+  }
+  .tile-link:hover{text-decoration:underline;}
+
   footer{text-align:center; font-size:11.5px; color:var(--text-muted); padding:20px 0;}
 
   /* Modal */
@@ -215,6 +254,7 @@
 
   @media (max-width:560px){
     .kpi-grid{grid-template-columns:repeat(2,1fr);}
+    .tile-grid{grid-template-columns:repeat(2,1fr);}
     .r-plat{display:none;}
     .plat-tab{min-width:0; font-size:11px;}
   }
@@ -229,10 +269,13 @@
       <img src="icons/icon-192.png" alt="">
       <span>INNOVIA-TAS Dashboard</span>
     </div>
-    <nav>
-      <a href="#" id="openPrivacy">Datenschutz</a>
-      <a href="index.html" id="logout">Abmelden</a>
-    </nav>
+    <div class="head-right">
+      <span class="clock" id="clock">–</span>
+      <nav>
+        <a href="#" id="openPrivacy">Datenschutz</a>
+        <a href="index.html" id="logout">Abmelden</a>
+      </nav>
+    </div>
   </header>
 
   <!-- ============ 1. FREIGABE-QUEUE ============ -->
@@ -285,26 +328,29 @@
       <div class="kpi-tab" data-z="jahr">Jahr</div>
     </div>
     <div class="kpi-grid">
-      <div class="kpi"><div class="kv" id="kKosten">–</div><div class="kl">Kosten</div></div>
+      <div class="kpi est"><div class="kv" id="kKostenEst">–</div><div class="kl">Kosten (Schätzung)</div></div>
+      <div class="kpi"><div class="kv" id="kKosten">–</div><div class="kl">Kosten (Abrechnung)</div></div>
       <div class="kpi"><div class="kv" id="kTokens">–</div><div class="kl">Tokens</div></div>
       <div class="kpi"><div class="kv" id="kPosts">–</div><div class="kl">Veröffentlicht</div></div>
       <div class="kpi"><div class="kv" id="kOffen">–</div><div class="kl">Offene Freigaben</div></div>
+      <div class="kpi"><div class="kv" id="kDauer">–</div><div class="kl">Ø Laufzeit</div></div>
     </div>
     <div class="kpi-note" id="kpiNote">
-      Kosten aus der OpenRouter-Abrechnung (Text&nbsp;+&nbsp;Bild). Der laufende Tag erscheint nach Tagesabschluss.
+      <b>Schätzung</b> = Näherung aus den Läufen, sofort sichtbar.
+      <b>Abrechnung</b> = echte OpenRouter-Rechnung (Text&nbsp;+&nbsp;Bild); der laufende Tag erscheint erst nach Tagesabschluss (UTC).
     </div>
   </div>
 
   <!-- ============ 3. POST-HISTORIE ============ -->
   <div class="card">
     <h2>Post-Historie</h2>
-    <div id="postList"><div class="row"><span class="muted">Wird geladen …</span></div></div>
+    <div class="tile-grid" id="postList"><div class="muted">Wird geladen …</div></div>
   </div>
 
   <!-- ============ 4. ENTSCHEIDUNGEN ============ -->
   <div class="card">
     <h2>Freigegeben &amp; Abgelehnt</h2>
-    <div id="entscheidungenList"><div class="row"><span class="muted">Wird geladen …</span></div></div>
+    <div class="tile-grid" id="entscheidungenList"><div class="muted">Wird geladen …</div></div>
   </div>
 
   <!-- ============ 5. LEADS ============ -->
@@ -510,11 +556,16 @@ let kpis = null, zeitraum = 'tag';
 function renderKpis(){
   const z = kpis && kpis[zeitraum];
   const set = (id, v) => document.getElementById(id).textContent = v;
-  if (!z) { ['kKosten','kTokens','kPosts','kOffen'].forEach(i => set(i,'–')); return; }
-  set('kKosten', Number(z.kosten || 0).toFixed(2).replace('.',',') + ' €');
-  set('kTokens', Number(z.tokens || 0).toLocaleString('de-DE'));
+  if (!z) { ['kKostenEst','kKosten','kTokens','kPosts','kOffen','kDauer'].forEach(i => set(i,'–')); return; }
+  const eur = v => Number(v || 0).toFixed(2).replace('.',',') + ' €';
+  set('kKostenEst', '≈ ' + eur(z.kosten_schaetz));
+  set('kKosten',    eur(z.kosten));
+  const tk = Number(z.tokens || 0) || Number(z.tokens_schaetz || 0);
+  set('kTokens', tk.toLocaleString('de-DE'));
   set('kPosts',  z.veroeffentlicht || 0);
   set('kOffen',  z.offen || 0);
+  const d = Number(z.dauer || 0);
+  set('kDauer',  d ? (d + ' s') : '–');
 }
 async function ladeKpis(){
   try {
@@ -539,26 +590,32 @@ async function ladePosts(){
   const box = document.getElementById('postList');
   try {
     const d = await api('get_posts');
-    const rows = Array.isArray(d) ? d.filter(x => x && x.id) : [];
+    const rows = (Array.isArray(d) ? d.filter(x => x && x.id) : []).slice(0, 4);
     if (!rows.length) {
-      box.innerHTML = '<div class="row"><span class="muted">Noch keine veröffentlichten Beiträge.</span></div>';
+      box.innerHTML = '<div class="muted">Noch keine veröffentlichten Beiträge.</div>';
       return;
     }
     box.innerHTML = rows.map(r => {
       const bild = r.image_url || r.image_url_quadrat || '';
-      const thumb = bild
-        ? '<img class="thumb" src="'+esc(bild)+'" alt="" onerror="this.style.visibility=\'hidden\'">'
-        : '<span class="thumb"></span>';
-      const st = String(r.status||'').toLowerCase().includes('fehl') ? 'abgelehnt' : 'veroeffentlicht';
-      return '<div class="row">' + thumb +
-        '<span class="status-dot '+st+'"></span>' +
-        '<span class="r-date">'+datum(r.gepostet_am)+'</span>' +
-        '<span class="r-plat">'+esc(r.plattform||'–')+'</span>' +
-        '<span class="r-text">'+esc((r.beitragstext||'').slice(0,110))+'</span>' +
+      const img = bild
+        ? '<img src="'+esc(bild)+'" alt="" onerror="this.parentNode.textContent=\'Bild nicht verfügbar\'">'
+        : 'Kein Bild gespeichert';
+      const plat = r.plattform || '–';
+      return '<div class="tile">' +
+        '<div class="tile-img">'+img+'</div>' +
+        '<div class="tile-body">' +
+          '<span class="tile-chip" style="background:'+platColor(plat)+';">'+esc(plat)+'</span>' +
+          '<div class="tile-topic">'+esc((r.beitragstext||'–').slice(0,80))+'</div>' +
+          '<div class="tile-meta">' +
+            '<span class="status-dot veroeffentlicht"></span>' +
+            '<span>'+datum(r.gepostet_am)+'</span>' +
+            (bild ? '<a class="tile-link" href="'+esc(bild)+'" target="_blank" rel="noopener" style="margin-left:auto;">Bild öffnen</a>' : '') +
+          '</div>' +
+        '</div>' +
       '</div>';
     }).join('');
   } catch (e) {
-    box.innerHTML = '<div class="row"><span class="err">Post-Historie konnte nicht geladen werden.</span></div>';
+    box.innerHTML = '<div class="err">Post-Historie konnte nicht geladen werden.</div>';
   }
 }
 
@@ -567,27 +624,35 @@ async function ladeEntscheidungen(){
   const box = document.getElementById('entscheidungenList');
   try {
     const d = await api('get_entscheidungen');
-    const rows = Array.isArray(d) ? d.filter(x => x && x.id) : [];
+    const rows = (Array.isArray(d) ? d.filter(x => x && x.id) : []).slice(0, 4);
     if (!rows.length) {
-      box.innerHTML = '<div class="row"><span class="muted">Noch keine Entscheidungen.</span></div>';
+      box.innerHTML = '<div class="muted">Noch keine Entscheidungen.</div>';
       return;
     }
     box.innerHTML = rows.map(r => {
-      const st = String(r.status||'').toLowerCase();
-      const wann = r.freigegeben_am || r.abgelehnt_am || r.angefragt_am;
-      const bild = r.image_url || '';
-      const thumb = bild
-        ? '<img class="thumb" src="'+esc(bild)+'" alt="" onerror="this.style.visibility=\'hidden\'">'
-        : '<span class="thumb"></span>';
-      return '<div class="row">' + thumb +
-        '<span class="status-dot '+esc(st)+'"></span>' +
-        '<span class="r-date">'+datum(wann)+'</span>' +
-        '<span class="r-plat">'+esc(r.plattform||'–')+'</span>' +
-        '<span class="r-text">'+esc(r.thema||'–')+'</span>' +
+      const st   = String(r.status||'').toLowerCase();
+      const wann = r.datum || r.freigegeben_am || r.abgelehnt_am || r.angefragt_am || '';
+      const bild = r.image_url || r.image_url_quadrat || '';
+      const img  = bild
+        ? '<img src="'+esc(bild)+'" alt="" onerror="this.parentNode.textContent=\'Bild nicht verfügbar\'">'
+        : 'Kein Bild gespeichert';
+      const farbe = st === 'freigegeben' ? '#1E7F4F' : (st === 'abgelehnt' ? '#E2231A' : '#C98A00');
+      const label = st === 'freigegeben' ? 'Freigegeben' : (st === 'abgelehnt' ? 'Abgelehnt' : 'Ausstehend');
+      return '<div class="tile">' +
+        '<div class="tile-img">'+img+'</div>' +
+        '<div class="tile-body">' +
+          '<span class="tile-chip" style="background:'+farbe+';">'+label+'</span>' +
+          '<div class="tile-topic">'+esc(r.thema||'–')+'</div>' +
+          '<div class="tile-meta">' +
+            '<span>'+esc(r.plattform||'–')+'</span>' +
+            '<span>· '+datum(wann)+'</span>' +
+            (bild ? '<a class="tile-link" href="'+esc(bild)+'" target="_blank" rel="noopener" style="margin-left:auto;">Bild öffnen</a>' : '') +
+          '</div>' +
+        '</div>' +
       '</div>';
     }).join('');
   } catch (e) {
-    box.innerHTML = '<div class="row"><span class="err">Entscheidungen konnten nicht geladen werden.</span></div>';
+    box.innerHTML = '<div class="err">Entscheidungen konnten nicht geladen werden.</div>';
   }
 }
 
@@ -596,7 +661,7 @@ async function ladeLeads(){
   const box = document.getElementById('leadList');
   try {
     const d = await api('get_leads');
-    const rows = Array.isArray(d) ? d.filter(x => x && x.id) : [];
+    const rows = (Array.isArray(d) ? d.filter(x => x && x.id) : []).slice(0, 5);
     if (!rows.length) {
       box.innerHTML = '<div class="row"><span class="muted">Noch keine Leads recherchiert.</span></div>';
       return;
@@ -625,6 +690,16 @@ document.getElementById('privacyModal').addEventListener('click', e => {
 document.getElementById('logout').addEventListener('click', () => {
   try { sessionStorage.removeItem('innovia_auth'); } catch(_){}
 });
+
+/* ================= Uhr ================= */
+function tickClock(){
+  const n = new Date();
+  const tag = n.toLocaleDateString('de-DE', {weekday:'long', day:'2-digit', month:'2-digit', year:'numeric'});
+  const zeit = n.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  document.getElementById('clock').textContent = tag + ' · ' + zeit;
+}
+tickClock();
+setInterval(tickClock, 1000);
 
 /* ================= Start ================= */
 ladeQueue();
